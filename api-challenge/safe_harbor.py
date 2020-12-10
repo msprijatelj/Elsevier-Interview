@@ -19,7 +19,7 @@ def dateToYear(dateStr):
 
 def stripZip(zipCode):
     zipCodeDf = pd.read_csv("population_by_zcta_2010.csv")
-    zipHead = int(zipCode.split("-")[0])//100
+    zipHead = int(zipCode[0:3])
     zipSeries = zipCodeDf["Zip Code ZCTA"].astype(int)
     zipSubset = zipCodeDf.loc[zipSeries.floordiv(100).eq(zipHead)]
     totalPop = zipSubset["2010 Census Population"].astype(int).sum()
