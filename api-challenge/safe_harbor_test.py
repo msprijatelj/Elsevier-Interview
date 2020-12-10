@@ -38,6 +38,10 @@ class TestSafeHarbor(unittest.TestCase):
         strippedZipSample = stripZip(zipCodeSample)
         self.assertEqual(strippedZipSample, "10000")
 
+        longZipCodeSample = "10013-4625"
+        strippedLongZipSample = stripZip(longZipCodeSample)
+        self.assertEqual(strippedLongZipSample, "10000")
+
         zipCodeLowPop = "10271"
         strippedZipLowPop = stripZip(zipCodeLowPop)
         self.assertEqual(strippedZipLowPop, "00000")
