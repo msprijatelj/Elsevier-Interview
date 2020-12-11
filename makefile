@@ -8,4 +8,4 @@ deploy:
 	cd api-challenge; python3 safe_harbor.py
 
 uninstall:
-	pip freeze | xargs pip uninstall -y
+	pip3 freeze | xargs pip3 uninstall -y
