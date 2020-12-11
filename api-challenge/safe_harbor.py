@@ -73,7 +73,7 @@ def redactMessage(msg):
     return msg
 
 parser = reqparse.RequestParser()
-parser.add_argument('age', type=str)
+parser.add_argument('birthDate', type=str)
 parser.add_argument('zipCode', type=str)
 parser.add_argument('admissionDate', type=str)
 parser.add_argument('dischargeDate', type=str)
