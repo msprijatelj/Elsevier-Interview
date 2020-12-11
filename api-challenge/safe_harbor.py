@@ -72,26 +72,32 @@ def redactMessage(msg):
     msg = redactDate(msg)
     return msg
 
-def handler(event):
-    inputJson = json.loads(event)
-    inputJson = {k:str(v) for k, v in inputJson.items()}
+parser = reqparse.RequestParser()
+parser.add_argument('age', type=str)
+parser.add_argument('zipCode', type=str)
+parser.add_argument('admissionDate', type=str)
+parser.add_argument('dischargeDate', type=str)
+parser.add_argument('notes', type=str)
+class SafeHarbor(Resource):
+    def post(self):
+        args = parser.parse_args()
 
-    age = birthDateToAge(inputJson["birthDate"])
-    zipCode = stripZip(inputJson["zipCode"])
-    admissionYear = dateToYear(inputJson["admissionDate"])
-    dischargeYear = dateToYear(inputJson["dischargeDate"])
-    notes = redactMessage(inputJson["notes"])
+        age = birthDateToAge(args["birthDate"])
+        zipCode = stripZip(args["zipCode"])
+        admissionYear = dateToYear(args["admissionDate"])
+        dischargeYear = dateToYear(args["dischargeDate"])
+        notes = redactMessage(args["notes"])
 
-    outputJson = {
-        "age": age,
-        "zipCode": zipCode,
-        "admissionYear": admissionYear,
-        "dischargeYear": dischargeYear,
-        "notes": notes
-    }
+        response = {
+            "age": age,
+            "zipCode": zipCode,
+            "admissionYear": admissionYear,
+            "dischargeYear": dischargeYear,
+            "notes": notes
+        }
+        return response, 201
 
-    return outputJson
-
+api.add_resource(SafeHarbor, "/")
 
 if __name__ == "__main__":
-    pass
+    app.run(debug=True)
