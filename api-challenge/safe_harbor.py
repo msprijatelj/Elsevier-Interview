@@ -31,9 +31,11 @@ def dateToYear(dateStr):
 def stripZip(zipCode):
     try:
         zipCodeDf = pd.read_csv("population_by_zcta_2010.csv")
-        zipHead = int(zipCode[0:3])
+        zipHead = zipCode[0:3].ljust(3, "0")
+
+        # Select all zip codes with first 3 digits matching the input zip code.
         zipSeries = zipCodeDf["Zip Code ZCTA"].astype(int)
-        zipSubset = zipCodeDf.loc[zipSeries.floordiv(100).eq(zipHead)]
+        zipSubset = zipCodeDf.loc[zipSeries.floordiv(100).eq(int(zipHead))]
         totalPop = zipSubset["2010 Census Population"].astype(int).sum()
         outZipCode = f"{zipHead}00" if totalPop >= 20000 else "00000"
     except FileNotFoundError as e:
@@ -63,6 +65,8 @@ def redactPhone(msg):
     return msg
 
 def redactDate(msg):
+    # Not enough time to implement a robust date-searching tool.
+    # Would probably use an existing package here for ease of writing.
     return msg
 
 def redactMessage(msg):
