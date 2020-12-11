@@ -4,35 +4,62 @@ import pandas as pd
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from datetime import date
-import flask
+from flask import Flask
+from flask_restful import Api, Resource, reqparse
+import random
+
+app = Flask(__name__)
+api = Api(app)
 
 def birthDateToAge(dateStr):
-    birthDate = parse(dateStr)
-    realAge = relativedelta(date.today(), birthDate.date()).years
-    outAge = str(realAge) if realAge < 90 else "90+"
+    try:
+        birthDate = parse(dateStr)
+        realAge = relativedelta(date.today(), birthDate.date()).years
+        outAge = str(realAge) if realAge < 90 else "90+"
+    except:
+        outAge = "ERROR"
     return outAge
 
 def dateToYear(dateStr):
-    fullDate = parse(dateStr)
-    outYear = str(fullDate.year)
+    try:
+        fullDate = parse(dateStr)
+        outYear = str(fullDate.year)
+    except:
+        outYear = "ERROR"
     return outYear
 
 def stripZip(zipCode):
-    zipCodeDf = pd.read_csv("population_by_zcta_2010.csv")
-    zipHead = int(zipCode[0:3])
-    zipSeries = zipCodeDf["Zip Code ZCTA"].astype(int)
-    zipSubset = zipCodeDf.loc[zipSeries.floordiv(100).eq(zipHead)]
-    totalPop = zipSubset["2010 Census Population"].astype(int).sum()
-    outZipCode = f"{zipHead}00" if totalPop >= 20000 else "00000"
+    try:
+        zipCodeDf = pd.read_csv("population_by_zcta_2010.csv")
+        zipHead = int(zipCode[0:3])
+        zipSeries = zipCodeDf["Zip Code ZCTA"].astype(int)
+        zipSubset = zipCodeDf.loc[zipSeries.floordiv(100).eq(zipHead)]
+        totalPop = zipSubset["2010 Census Population"].astype(int).sum()
+        outZipCode = f"{zipHead}00" if totalPop >= 20000 else "00000"
+    except FileNotFoundError as e:
+        raise e
+    except:
+        outZipCode = "ERROR"
     return outZipCode
 
 def redactEmail(msg):
+    emailPattern = re.compile(r"(\S+)@(\S+)\.([a-zA-Z0-9]+)")
+    emailRedact = "XXXXX@XXXXX.XXX"
+    msg = emailPattern.sub(emailRedact, msg)
     return msg
 
 def redactSsn(msg):
+    ssnPattern = re.compile(
+        r"([0-9]{3})[-]?([0-9]{2})[-]?([0-9]{4})")
+    ssnRedact = "XXX-XX-XXXX"
+    msg = ssnPattern.sub(ssnRedact, msg)
     return msg
 
 def redactPhone(msg):
+    phonePattern = re.compile(
+        r"[(]?([0-9]{3})[)]?[ -]?([0-9A-Z]{3})[ -]?([0-9]{4})")
+    phoneRedact = "(XXX) XXX-XXXX"
+    msg = phonePattern.sub(phoneRedact, msg)
     return msg
 
 def redactDate(msg):
@@ -40,13 +67,14 @@ def redactDate(msg):
 
 def redactMessage(msg):
     msg = redactEmail(msg)
-    msg = redactSsn(msg)
     msg = redactPhone(msg)
+    msg = redactSsn(msg)
     msg = redactDate(msg)
     return msg
 
 def handler(event):
     inputJson = json.loads(event)
+    inputJson = {k:str(v) for k, v in inputJson.items()}
 
     age = birthDateToAge(inputJson["birthDate"])
     zipCode = stripZip(inputJson["zipCode"])
