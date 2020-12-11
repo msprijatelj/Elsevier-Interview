@@ -1,6 +1,6 @@
 # Safe Harbor De-Identification
 
-Python3.7 recommended.  To install & deploy, run `make all` in your terminal environment.  The endpoint can then be tested via POST request to the API endpoint described by the app (default `http://127.0.0.1:5000`).  This can be done via a cURL command in another terminal window, or through the API request framework of your choice.  For example, to test using the sample payload given in the original problem's README, copy/paste the below command into your terminal environment.
+Python3.7 is recommended to run this code.  To install & deploy, run `make all` in your terminal environment.  The endpoint can then be tested via POST request to the API endpoint described by the app (default `http://127.0.0.1:5000`).  This can be done via a cURL command in another terminal window, or through the API request framework of your choice.  For example, to test using the sample payload given in the original problem's README, copy/paste the below command into your terminal environment.
 
 ```bash
 curl --header "Content-Type: application/json" \
