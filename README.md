@@ -22,3 +22,9 @@ The rules implemented include the following:
 * Redaction of email, US phone number, and SSN from notes
 
 I have omitted the redaction of dates within the `notes` field for this submission due to lack of time.  Were I to attempt to implement the detection and redaction of dates, I would likely rely upon a third-party package to detect all of the potential date formats before writing my own code to redact any detected dates.
+
+
+## Feedback
+Solution was solid, but these regions need improvement:
+* Improve error handling
+* Issue with opening/closing the zip code file with every request (read it into existence once)
